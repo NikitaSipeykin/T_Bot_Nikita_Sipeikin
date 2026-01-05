@@ -6,12 +6,47 @@
 
     <groupId>app.bot</groupId>
     <artifactId>T_Bot_Nikita_Sipeikin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.4</version>
+    </parent>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>web-app</module>
+        <module>module_core</module>
+        <module>module_texts</module>
+        <module>module_media-note</module>
+        <module>module_content</module>
+        <module>module_payment</module>
+        <module>module_chat-log</module>
+        <module>telegram-bot</module>
+        <module>module_analytics</module>
+
+    </modules>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <spring.boot.version>3.5.3</spring.boot.version>
+        <telegram.version>6.9.7.1</telegram.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
