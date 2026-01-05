@@ -15,7 +15,6 @@ import app.core.program.DailyUpdateResult;
 import app.module.node.texts.BotTextService;
 import app.module.node.texts.TextMarker;
 import app.module.payment.PaymentService;
-import app.module.program.ProgramService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -30,18 +29,17 @@ public class DemoBot extends BaseTelegramBot {
 
   private final PaymentService paymentService;
   private final UserStateService userStateService;
-  private final ProgramService programService;
+
   private final BotTextService text;
 
 
   public DemoBot(
       BotProperties botProperties, CallbackDispatcher callbackDispatcher, CommandDispatcher commandDispatcher,
       MessageDispatcher messageDispatcher, PaymentService paymentService, UserStateService userStateService,
-      TelegramSender telegramSender, ProgramService programService, BotTextService text, BotResponseProcessor botResponseProcessor) {
+      TelegramSender telegramSender,  BotTextService text, BotResponseProcessor botResponseProcessor) {
     super(botProperties, callbackDispatcher, commandDispatcher, messageDispatcher, botResponseProcessor, telegramSender);
     this.paymentService = paymentService;
     this.userStateService = userStateService;
-    this.programService = programService;
     this.text = text;
   }
 
@@ -83,27 +81,27 @@ public class DemoBot extends BaseTelegramBot {
     log.warn("Unhandled update: {}", update);
   }
 
-  @Scheduled(cron = "00 00 08 * * *")
-  public void scheduledDailyUpdate() {
-    log.info("DB daily update");
-
-    List<DailyUpdateResult> updates = programService.dailyUpdate();
-    log.info("updates = {}", updates);
-
-    for (DailyUpdateResult upd : updates) {
-
-      TextResponse response = new TextResponse(
-          upd.chatId(),
-          text.format(TextMarker.SCHEDULER_MESSAGE),
-          KeyboardFactory.from(
-              List.of(
-                  new KeyboardOption("Ура!", TextMarker.PROGRAM)
-              )
-          )
-      );
-
-      telegramSender.send(response);
-    }
-  }
+//  @Scheduled(cron = "00 00 08 * * *")
+//  public void scheduledDailyUpdate() {
+//    log.info("DB daily update");
+//
+//    List<DailyUpdateResult> updates = programService.dailyUpdate();
+//    log.info("updates = {}", updates);
+//
+//    for (DailyUpdateResult upd : updates) {
+//
+//      TextResponse response = new TextResponse(
+//          upd.chatId(),
+//          text.format(TextMarker.SCHEDULER_MESSAGE),
+//          KeyboardFactory.from(
+//              List.of(
+//                  new KeyboardOption("Ура!", TextMarker.PROGRAM)
+//              )
+//          )
+//      );
+//
+//      telegramSender.send(response);
+//    }
+//  }
 
 }

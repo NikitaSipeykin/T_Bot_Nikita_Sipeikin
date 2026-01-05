@@ -1,6 +1,6 @@
 package app.bot.bot;
 
-public class Commands {
+public class CommandKey {
   public static final String START = "/start";
   public static final String BROADCAST = "/broadcast";
   public static final String UNSUBSCRIBE = "/unsubscribe";
