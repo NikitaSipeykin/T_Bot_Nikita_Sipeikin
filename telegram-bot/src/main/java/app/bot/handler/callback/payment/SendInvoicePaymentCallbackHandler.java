@@ -11,6 +11,7 @@ import app.bot.keyboard.KeyboardOption;
 import app.bot.state.UserState;
 import app.bot.state.UserStateService;
 import app.module.converter.ExchangeRateServiceImpl;
+import app.module.node.texts.BotTextService;
 import app.module.node.texts.TextMarker;
 import app.module.payment.PaymentService;
 import app.module.payment.props.PaymentOption;
@@ -33,6 +34,7 @@ public class SendInvoicePaymentCallbackHandler implements CallbackHandler {
   private final PaymentService paymentService;
   private final ExchangeRateServiceImpl rateService;
   private final AnalyticsFacade analytics;
+  private final BotTextService textService;
 
   @Override
   public boolean supports(String callbackData) {
@@ -55,34 +57,40 @@ public class SendInvoicePaymentCallbackHandler implements CallbackHandler {
       int price = option.price();
       int amount;
 
+      String title = textService.format(TextMarker.SEND_INVOICE_TITLE);
+      String description = textService.format(TextMarker.SEND_INVOICE_DESCRIPTION);
+      String label = textService.format(TextMarker.SEND_INVOICE_LABEL);
+
       if (!currency.equals("USD")) {
         amount = rateService.convertFromUsd(price, currency);
       } else amount = price;
 
       String payload = "program_access_" + chatId;
+
       analytics.trackPaymentStart(chatId, payload, amount, currency);
 
       paymentService.createPayment(chatId, payload, amount, currency);
 
-      CompositeResponse compositeResponse = new CompositeResponse(new ArrayList<>());;
-
       SendInvoice invoice = SendInvoice.builder()
           .chatId(chatId.toString())
-          .title("Доступ к программе")
-          .description("Полный доступ к программе вибраций и чакр")
+          .title(title)
+          .description(description)
           .payload(payload)
           .providerToken(providerToken)
           .currency(currency)
           .prices(List.of(
-              new LabeledPrice("Доступ", amount) // в копейках
+              new LabeledPrice(label, amount)
           ))
           .startParameter("start")
           .build();
 
       SendInvoiceResponse invoiceResponse = new SendInvoiceResponse(invoice);
 
-      TextResponse response = new TextResponse(chatId, "Выбрать другую валюту!",
-          KeyboardFactory.from(List.of(new KeyboardOption("Назад", TextMarker.PAYMENT))));
+      CompositeResponse compositeResponse = new CompositeResponse(new ArrayList<>());
+
+      TextResponse response = new TextResponse(chatId, textService.format(TextMarker.CURRENCY_CHOOSE_ANOTHER),
+          KeyboardFactory.from(List.of(
+              new KeyboardOption(textService.format(TextMarker.CURRENCY_CHOOSE_BUTTON_BACK), TextMarker.PAYMENT))));
 
       compositeResponse.responses().add(invoiceResponse);
       compositeResponse.responses().add(response);
@@ -91,7 +99,7 @@ public class SendInvoicePaymentCallbackHandler implements CallbackHandler {
       return compositeResponse;
     } catch (IllegalStateException e) {
       analytics.trackPaymentUnavailable(chatId, currency, e.getMessage());
-      return new TextResponse(chatId, "Оплата в данной валюте временно недоступна", null);
+      return new TextResponse(chatId, textService.format(TextMarker.CURRENCY_ERROR), null);
     }
   }
 

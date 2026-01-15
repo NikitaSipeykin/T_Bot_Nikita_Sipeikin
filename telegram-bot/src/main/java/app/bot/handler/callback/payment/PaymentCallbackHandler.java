@@ -20,6 +20,7 @@ import java.util.List;
 public class PaymentCallbackHandler implements CallbackHandler {
 
   private final UserStateService userStateService;
+  private final BotTextService textService;
 
   @Override
   public boolean supports(String callbackData) {
@@ -29,17 +30,19 @@ public class PaymentCallbackHandler implements CallbackHandler {
   @Override
   public BotResponse handle(CallbackQuery query) {
     Long chatId = query.getMessage().getChatId();
+
     if (userStateService.getState(chatId).equals(UserState.PAYMENT) ||
         userStateService.getState(chatId).equals(UserState.NEED_PAYMENT)) {
+
       userStateService.setState(chatId, UserState.PAYMENT);
 
-      return new TextResponse(chatId, "Выберите валюту для оплаты",
+      return new TextResponse(chatId, textService.format(TextMarker.PAYMENT_CHOOSE_CURRENCY),
           KeyboardFactory.from(List.of(
               new KeyboardOption("UZS", "UZS"),
               new KeyboardOption("USD", "USD"),
               new KeyboardOption("EUR", "EUR"),
               new KeyboardOption("RUB", "RUB"))));
     }
-    return new TextResponse(chatId, "Сейчас оплата не доступна. Попробуйте вызвать меню", null);
+    return new TextResponse(chatId, textService.format(TextMarker.PAYMENT_ERROR), null);
   }
 }

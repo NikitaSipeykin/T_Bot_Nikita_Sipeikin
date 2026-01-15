@@ -4,6 +4,8 @@ import app.bot.bot.responce.*;
 import app.bot.facade.AnalyticsFacade;
 import app.bot.state.UserState;
 import app.bot.state.UserStateService;
+import app.module.node.texts.BotTextService;
+import app.module.node.texts.TextMarker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,6 +17,7 @@ public class AdminQuestionCommandHandler implements CommandHandler {
 
   private final UserStateService userStateService;
   private final AnalyticsFacade analytics;
+  private final BotTextService textService;
 
   @Override
   public String command() {
@@ -26,7 +29,7 @@ public class AdminQuestionCommandHandler implements CommandHandler {
     Long chatId = message.getChatId();
 
       userStateService.setState(chatId, UserState.REQUEST);
-      return new TextResponse(chatId, "Следующее сообщение будет отправлено напрямую админу!", null);
+      return new TextResponse(chatId, textService.format(TextMarker.ADMIN_QUESTION_USER_WARN), null);
   }
 }
 

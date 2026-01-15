@@ -33,9 +33,9 @@ public class BroadcastCommandHandler implements CommandHandler {
     Long chatId = message.getChatId();
     Long userId = message.getFrom().getId();
 
-    log.debug("userId = " + userId + "\n" +
-             "botProperties.getAdminId() = " + botProperties.getAdminId() + "\n" +
+    log.debug("userId = " + userId + "\n" + "botProperties.getAdminId() = " + botProperties.getAdminId() + "\n" +
              "is equals = " + userId.equals(botProperties.getAdminId()));
+
     if (!userId.equals(botProperties.getAdminId())) {
       return new TextResponse(chatId, textService.format(TextMarker.BROADCAST_FAIL),null);
     }

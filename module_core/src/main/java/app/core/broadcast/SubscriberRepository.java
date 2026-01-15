@@ -14,10 +14,10 @@ public class SubscriberRepository {
     this.jdbc = jdbc;
   }
 
-  public void saveOrActivate(Long chatId, String username, String firstName) {
-    jdbc.update("INSERT INTO subscribers(chat_id, username, first_name, active) VALUES (?, ?, ?, true) " +
+  public void saveOrActivate(Long chatId, String username, String firstName, String language) {
+    jdbc.update("INSERT INTO subscribers(chat_id, username, first_name, active, language) VALUES (?, ?, ?, true, ?) " +
                 "ON CONFLICT (chat_id) DO UPDATE SET active = TRUE, username = excluded.username, first_name = excluded.first_name",
-        chatId, username, firstName);
+        chatId, username, firstName, language);
   }
 
   public void deactivate(Long chatId) {

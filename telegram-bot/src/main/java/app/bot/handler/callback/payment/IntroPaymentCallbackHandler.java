@@ -34,22 +34,17 @@ public class IntroPaymentCallbackHandler implements CallbackHandler {
   @Override
   public BotResponse handle(CallbackQuery query) {
     Long chatId = query.getMessage().getChatId();
+
     analytics.trackButtonClick(query, TextMarker.PROJECT_DESCRIPTION);
+
+    analytics.trackBlockView(chatId, TextMarker.PROJECT_DESCRIPTION,
+        Map.of("state", UserState.NEED_PAYMENT.name(), "source", "callback"));
 
     userStateService.setState(chatId, UserState.NEED_PAYMENT);
 
-    analytics.trackBlockView(
-        chatId,
-        TextMarker.PROJECT_DESCRIPTION,
-        Map.of(
-            "state", UserState.NEED_PAYMENT.name(),
-            "source", "callback"
-        )
-    );
-
     return new TextResponse(chatId, textService.get(TextMarker.PROJECT_DESCRIPTION),
         KeyboardFactory.from(List.of(
-            new KeyboardOption("Да, записаться!", TextMarker.PAYMENT),
-            new KeyboardOption("Расскажи подробнее", TextMarker.INFO_PROGRAM))));
+            new KeyboardOption(textService.format(TextMarker.PROJECT_DESCRIPTION_BUTTON_YES), TextMarker.PAYMENT),
+            new KeyboardOption(textService.format(TextMarker.PROJECT_DESCRIPTION_BUTTON_INFO), TextMarker.PROJECT_INFO))));
   }
 }

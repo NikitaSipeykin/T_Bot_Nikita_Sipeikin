@@ -7,6 +7,7 @@ import app.bot.keyboard.KeyboardFactory;
 import app.bot.keyboard.KeyboardOption;
 import app.bot.state.UserState;
 import app.bot.facade.AnalyticsFacade;
+import app.module.node.texts.BotTextService;
 import app.module.node.texts.TextMarker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class StepBackMessageHandler implements MessageHandler {
 
   private final AnalyticsFacade analyticsFacade;
+  private final BotTextService textService;
 
   @Override
   public UserState supports() {
@@ -34,8 +36,8 @@ public class StepBackMessageHandler implements MessageHandler {
 
     analyticsFacade.trackCtaShown(chatId, TextMarker.PROJECT_DESCRIPTION);
 
-    return new TextResponse(chatId, "Хотите вернуться к описанию курса?",
+    return new TextResponse(chatId, textService.format(TextMarker.STEP_BACK),
         KeyboardFactory.from(List.of(
-            new KeyboardOption("Да", TextMarker.PROJECT_DESCRIPTION))));
+            new KeyboardOption(textService.format(TextMarker.STEP_BACK_BUTTON_YES), TextMarker.PROJECT_DESCRIPTION))));
   }
 }

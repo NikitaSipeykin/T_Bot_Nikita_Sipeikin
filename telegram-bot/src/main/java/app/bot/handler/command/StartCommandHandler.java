@@ -36,6 +36,10 @@ public class StartCommandHandler implements CommandHandler {
   public BotResponse handle(Message message) {
     Long chatId = message.getChatId();
     String firstName = message.getFrom().getFirstName();
+    String username = message.getFrom().getUserName();
+    String language = message.getFrom().getLanguageCode();
+
+    subscriberService.subscribe(chatId, username, firstName, language);
 
     analytics.trackSubscribe(message, true);
     analytics.trackBlockView(chatId, "PROGRAM_CONTINUE");
@@ -43,13 +47,12 @@ public class StartCommandHandler implements CommandHandler {
     CompositeResponse compositeResponse = new CompositeResponse(new ArrayList<>());
 
     TextResponse text = new TextResponse(chatId,
-        textService.format("START", firstName != null ? firstName : "друг"), null);
-
-
-    MediaResponse video = new MediaResponse(chatId, MediaType.VIDEO_NOTE, CommandKey.VIDEO_START);
+        textService.format(
+            TextMarker.START,
+            firstName != null ? firstName : textService.format(TextMarker.START_COMMAND_USERNAME_FILLER)),
+        null);
 
     compositeResponse.responses().add(text);
-    compositeResponse.responses().add(video);
 
     return compositeResponse;
   }

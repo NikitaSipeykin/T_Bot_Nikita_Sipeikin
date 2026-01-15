@@ -5,6 +5,8 @@ import app.bot.state.UserState;
 import app.bot.state.UserStateService;
 import app.bot.email.EmailService;
 import app.core.broadcast.SubscriberService;
+import app.module.node.texts.BotTextService;
+import app.module.node.texts.TextMarker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -16,6 +18,7 @@ public class WaitEmailStateHandler implements StateMessageHandler {
 
   private final SubscriberService subscriberService;
   private final EmailService emailService;
+  private final BotTextService textService;
   private final UserStateService stateService;
   private final TelegramMessageSender sender;
 
@@ -33,7 +36,7 @@ public class WaitEmailStateHandler implements StateMessageHandler {
 
     if (!input.equals(code)) {
       sender.sendMessage(
-          new SendMessage(chatId.toString(), "Неверный код! Попробуй снова.")
+          new SendMessage(chatId.toString(), textService.format(TextMarker.MAIL_ERROR))
       );
       return;
     }
@@ -42,7 +45,7 @@ public class WaitEmailStateHandler implements StateMessageHandler {
     stateService.setState(chatId, UserState.DEFAULT);
 
     sender.sendMessage(
-        new SendMessage(chatId.toString(), "Отлично! Вот твой подарок 🎁")
+        new SendMessage(chatId.toString(), textService.format(TextMarker.MAIL_SUCCESS))
     );
   }
 }

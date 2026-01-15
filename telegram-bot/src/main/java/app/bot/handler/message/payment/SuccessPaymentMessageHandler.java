@@ -8,6 +8,7 @@ import app.bot.keyboard.KeyboardFactory;
 import app.bot.keyboard.KeyboardOption;
 import app.bot.state.UserState;
 import app.bot.state.UserStateService;
+import app.module.node.texts.BotTextService;
 import app.module.node.texts.TextMarker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class SuccessPaymentMessageHandler implements MessageHandler {
 
   private final AnalyticsFacade analyticsFacade;
   private final UserStateService userStateService;
+  private final BotTextService textService;
 
   @Override
   public UserState supports() {
@@ -39,7 +41,10 @@ public class SuccessPaymentMessageHandler implements MessageHandler {
 
     analyticsFacade.trackCtaShown(chatId, TextMarker.AFTER_PAYMENT);
 
-    return new TextResponse(chatId, "✅ Оплата прошла успешно! Добро пожаловать в программу",
-        KeyboardFactory.from(List.of(new KeyboardOption("Начать", TextMarker.AFTER_PAYMENT))));
+
+
+    return new TextResponse(chatId, textService.format(TextMarker.PAYMENT_PROJECT_INTRO),
+        KeyboardFactory.from(List.of(
+            new KeyboardOption(textService.format(TextMarker.PAYMENT_PROJECT_INTRO_BUTTON), TextMarker.AFTER_PAYMENT))));
   }
 }

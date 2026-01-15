@@ -12,8 +12,8 @@ public class SubscriberService {
     this.repo = repo;
   }
 
-  public void subscribe(Long chatId, String username, String firstName) {
-    repo.saveOrActivate(chatId, username, firstName);
+  public void subscribe(Long chatId, String username, String firstName, String language) {
+    repo.saveOrActivate(chatId, username, firstName, language);
   }
 
   public void unsubscribe(Long chatId) {

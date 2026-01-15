@@ -36,11 +36,11 @@ public class NeedPaymentMessageHandler implements MessageHandler {
 
     analyticsFacade.trackCtaShown(chatId, TextMarker.PAYMENT);
 
-    analyticsFacade.trackCtaShown(chatId, TextMarker.INFO_PROGRAM);
+    analyticsFacade.trackCtaShown(chatId, TextMarker.PROJECT_INFO);
 
     return new TextResponse(chatId, textService.get(TextMarker.NEED_PAYMENT),
         KeyboardFactory.from(List.of(
-            new KeyboardOption("Да, записаться!", TextMarker.PAYMENT),
-            new KeyboardOption("Расскажи подробнее", TextMarker.INFO_PROGRAM))));
+            new KeyboardOption(textService.format(TextMarker.PROJECT_DESCRIPTION_BUTTON_YES), TextMarker.PAYMENT),
+            new KeyboardOption(textService.format(TextMarker.PROJECT_DESCRIPTION_BUTTON_INFO), TextMarker.PROJECT_INFO))));
   }
 }
