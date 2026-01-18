@@ -1,0 +1,17 @@
+package app.bot.state;
+
+public enum UserState {
+  DEFAULT,
+  COURSE,
+  MAIL_REQUEST,
+  WAIT_EMAIL,
+  PAYMENT,
+  SUCCESS_PAYMENT,
+  NEED_PAYMENT,
+  REQUEST,
+  // --- CONTENT STATE ---
+  HALLIE,
+  BOT_ABILITY,
+  DEMO_ACCESS,
+  EMAIL, STATES, DEMO
+}
